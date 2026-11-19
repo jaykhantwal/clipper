@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Clip Studio Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;800;900&family=Noto+Sans+Devanagari:wght@700;900&family=Bebas+Neue&family=Anton&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0b10;--card:#14161f;--card2:#1a1d29;--line:#272b3a;--tx:#f1f3f9;--mut:#8a92a6;--ac:#ffd400;--ac2:#7c5cff;--ac3:#ff3d81;--hl:#ffd400;--fs:8}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#1b1440 0,transparent 60%),radial-gradient(900px 500px at 100% 0,#2a0f2e 0,transparent 55%),var(--bg);color:var(--tx);font-family:'Poppins','Noto Sans Devanagari',system-ui,sans-serif;font-weight:600;line-height:1.45;min-height:100vh}
+header{padding:20px 16px 6px;max-width:1180px;margin:auto}
+header h1{margin:0;font-size:26px;font-weight:900;letter-spacing:-.5px;background:linear-gradient(90deg,var(--ac),var(--ac3),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{margin:4px 0 0;color:var(--mut);font-size:14px;font-weight:500}
+main{max-width:1180px;margin:auto;padding:12px 16px 50px;display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:900px){main{grid-template-columns:380px 1fr;align-items:start}.prev{position:sticky;top:12px}}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.card h2{margin:0 0 10px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.card h2 b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--ac);color:#111;font-size:12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;background:#0f121a;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer}
+.tab.on{background:var(--ac);color:#111;border-color:var(--ac);font-weight:800}
+.pane{display:none}.pane.on{display:block}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;font-weight:600}
+input[type=text],textarea,select{width:100%;background:#0d1017;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:14px}
+textarea{min-height:150px;resize:vertical;font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--ac)}
+input[type=color]{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;background:#0d1017;padding:2px}
+.row{display:flex;gap:8px;align-items:flex-end}.row>*{flex:1;min-width:0}
+.sl{display:grid;grid-template-columns:96px 1fr 38px;gap:8px;align-items:center;margin:6px 0}
+.sl span{font-size:12px;color:var(--mut)}.sl em{font-style:normal;font-size:12px;text-align:right;color:var(--tx)}
+button{background:#222735;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:13px;cursor:pointer}
+button.pri{background:linear-gradient(90deg,var(--ac),#ffb300);color:#111;border-color:transparent;font-weight:900}
+button:active{transform:scale(.97)}
+.mini{padding:6px 8px;font-size:12px;margin-top:6px;width:100%}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--tx);margin:10px 0 0}
+.chk input{width:18px;height:18px;accent-color:var(--ac)}
+.hint{font-size:12px;color:var(--mut);margin-top:6px;font-weight:500}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{height:64px;border-radius:12px;border:2px solid transparent;cursor:pointer;display:flex;align-items:flex-end;padding:6px;font-size:11px;font-weight:800;text-shadow:0 1px 3px #000;color:#fff;background:linear-gradient(135deg,#444,#222)}
+.chip.on{border-color:var(--ac)}
+.chip[data-p=none]{background:linear-gradient(135deg,#556,#334)}
+.chip[data-p=cinema]{background:linear-gradient(135deg,#0f4c5c,#e36414)}
+.chip[data-p=vintage]{background:linear-gradient(135deg,#8d6e4a,#d9b382)}
+.chip[data-p=bw]{background:linear-gradient(135deg,#111,#ddd)}
+.chip[data-p=vibrant]{background:linear-gradient(135deg,#ff0080,#00d4ff)}
+.chip[data-p=cyber]{background:linear-gradient(135deg,#7c5cff,#00f0ff)}
+.chip[data-p=sunset]{background:linear-gradient(135deg,#ff512f,#f09819)}
+.chip[data-p=moody]{background:linear-gradient(135deg,#1d2b44,#5d3a6b)}
+.chip[data-p=warm]{background:linear-gradient(135deg,#ff9a3c,#ffd27a)}
+.phone{container-type:inline-size;position:relative;width:min(100%,350px);aspect-ratio:9/16;margin:auto;background:#000;border-radius:26px;overflow:hidden;border:2px solid var(--line);box-shadow:0 20px 60px rgba(124,92,255,.25)}
+.stage{position:absolute;inset:0;overflow:hidden}
+.vwrap{position:absolute;top:50%;left:50%;height:100%;aspect-ratio:16/9;transform:translate(-50%,-50%)}
+.vwrap iframe,.vwrap #yt{width:100%;height:100%;border:0;pointer-events:none;display:block}
+.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--mut);padding:24px;font-size:14px;z-index:5}
+.fx{position:absolute;inset:0;pointer-events:none}
+.vig{z-index:2;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,var(--vig,0)) 100%)}
+.grain{z-index:2;opacity:var(--grain,0);mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");animation:grn .6s steps(6) infinite}
+@keyframes grn{0%{background-position:0 0}20%{background-position:-30px 20px}40%{background-position:25px -35px}60%{background-position:-15px -10px}80%{background-position:35px 30px}100%{background-position:0 0}}
+.scan{z-index:2;opacity:var(--scan,0);background:repeating-linear-gradient(0deg,rgba(0,0,0,.55) 0,rgba(0,0,0,.55) 1px,transparent 1px,transparent 3px)}
+.leak{z-index:2;opacity:var(--leak,0);mix-blend-mode:screen;background:radial-gradient(circle at 0% 0%,rgba(255,120,40,.85),transparent 45%),radial-gradient(circle at 100% 100%,rgba(255,40,120,.7),transparent 40%);animation:lk 4s ease-in-out infinite alternate}
+@keyframes lk{from{filter:hue-rotate(0)}to{filter:hue-rotate(40deg)}}
+.bars{z-index:3;display:none;background:linear-gradient(#000,#000) top/100% 11% no-repeat,linear-gradient(#000,#000) bottom/100% 11% no-repeat}
+.flash{z-index:6;background:#fff;opacity:0}
+.fade{z-index:6;background:#000;opacity:0}
+.mark{position:absolute;z-index:4;right:5%;bottom:3%;font-size:calc(3.4*1cqw);font-weight:800;color:rgba(255,255,255,.85);text-shadow:0 1px 4px #000;pointer-events:none}
+.cap{position:absolute;left:4%;right:4%;text-align:center;font-weight:900;line-height:1.18;font-size:calc(var(--fs) * 1cqw);pointer-events:none;z-index:4;font-family:'Poppins','Noto Sans Devanagari',sans-serif}
+.cap.bottom{bottom:15%}.cap.middle{top:50%;transform:translateY(-50%)}.cap.top{top:12%}
+.cap.up{text-transform:uppercase}
+.cap .w{display:inline-block;margin:0 .1em;will-change:transform}
+.f-poppins{font-family:'Poppins','Noto Sans Devanagari',sans-serif}
+.f-anton{font-family:'Anton','Noto Sans Devanagari',sans-serif;letter-spacing:.02em}
+.f-bebas{font-family:'Bebas Neue','Noto Sans Devanagari',sans-serif;letter-spacing:.04em}
+.f-marker{font-family:'Permanent Marker','Noto Sans Devanagari',cursive}
+.s1 .w{color:#fff;-webkit-text-stroke:.14em #000;paint-order:stroke fill}
+.s1 .w.on{color:var(--hl);transform:scale(1.12)}
+.s2 .w{color:#fff;-webkit-text-stroke:.14em #000;paint-order:stroke fill;padding:0 .14em;border-radius:.2em}
+.s2 .w.on{background:var(--hl);color:#000;-webkit-text-stroke:0;transform:scale(1.08)}
+.s3 .w{color:#fff;text-shadow:0 0 .15em rgba(255,255,255,.3)}
+.s3 .w.on{text-shadow:0 0 .1em var(--hl),0 0 .3em var(--hl),0 0 .7em var(--hl);transform:scale(1.1)}
+.s4 .w{color:rgba(255,255,255,.45);text-shadow:0 .05em .2em rgba(0,0,0,.8)}
+.s4 .w.on{color:#fff}
+.s5 .w{color:#fff;-webkit-text-stroke:.16em #000;paint-order:stroke fill;text-shadow:.07em .09em 0 var(--hl)}
+.s5 .w.on{color:var(--hl);text-shadow:.07em .09em 0 #fff;transform:scale(1.12) rotate(-2deg)}
+.s6 .w{color:#fff;background:rgba(0,0,0,.6);padding:.02em .18em;border-radius:.25em;-webkit-box-decoration-break:clone}
+.s6 .w.on{background:var(--hl);color:#000}
+.s7 .w{color:transparent;-webkit-text-stroke:.05em #fff}
+.s7 .w.on{color:var(--hl);-webkit-text-stroke:.05em var(--hl);transform:scale(1.1)}
+.a-pop .w.on{animation:pop .22s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1.12)}}
+.a-bounce .w.on{animation:bnc .35s ease-out}
+@keyframes bnc{0%{transform:translateY(.4em) scale(.9)}50%{transform:translateY(-.22em) scale(1.18)}100%{transform:translateY(0) scale(1.12)}}
+.a-slide .w.on{animation:sld .25s ease-out}
+@keyframes sld{0%{transform:translateX(-.5em);opacity:0}100%{transform:translateX(0);opacity:1}}
+.a-shake .w.on{animation:shk .3s linear}
+@keyframes shk{0%,100%{transform:translate(0)}20%{transform:translate(-.06em,.04em) rotate(-3deg)}40%{transform:translate(.06em,-.04em) rotate(3deg)}60%{transform:translate(-.04em,-.03em) rotate(-2deg)}80%{transform:translate(.04em,.04em) rotate(2deg)}}
+.a-fade .w.on{animation:fdi .3s ease-out}
+@keyframes fdi{0%{opacity:0}100%{opacity:1}}
+.m-zoom{animation:mzoom var(--mdur,10s) ease-in-out infinite alternate}
+@keyframes mzoom{from{transform:scale(1)}to{transform:scale(1.18)}}
+.m-pulse{animation:mpulse .6s ease-in-out infinite}
+@keyframes mpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.m-shake{animation:mshake .35s linear infinite}
+@keyframes mshake{0%,100%{transform:translate(0)}25%{transform:translate(-1.2%,.8%)}50%{transform:translate(1%,-1%)}75%{transform:translate(-.8%,-.6%)}}
+.m-glitch{animation:mglitch 1.4s steps(1) infinite}
+@keyframes mglitch{0%,88%,100%{transform:translate(0);filter:none}90%{transform:translate(-2%,0) skewX(4deg);filter:hue-rotate(90deg) saturate(2)}93%{transform:translate(2%,1%) skewX(-4deg);filter:hue-rotate(-90deg)}96%{transform:translate(-1%,-1%)}}
+.m-drift{animation:mdrift 12s ease-in-out infinite alternate}
+@keyframes mdrift{from{transform:scale(1.15) translateX(-3%)}to{transform:scale(1.15) translateX(3%)}}
+.bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.18);z-index:7}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac3))}
+.ctrl{display:flex;gap:8px;justify-content:center;margin-top:12px}.ctrl button{flex:1;max-width:170px}
+.time{font-variant-numeric:tabular-nums;text-align:center;color:var(--mut);font-size:12px;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:92vw;text-align:center}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 Clip Studio Pro</h1>
+  <p>Clip any YouTube video or livestream into a vertical short with color grading, visual effects, animated captions and English translation.</p>
+</header>
+
+<main>
+  <section class="card prev">
+    <div class="phone" id="phone">
+      <div class="stage" id="stage">
+        <div class="vwrap" id="vwrap"><div id="yt"></div></div>
+      </div>
+      <div class="fx vig"></div>
+      <div class="fx grain"></div>
+      <div class="fx scan"></div>
+      <div class="fx leak"></div>
+      <div class="fx bars" id="bars"></div>
+      <div class="fx flash" id="flash"></div>
+      <div class="fx fade" id="fade"></div>
+      <div class="empty" id="empty">Paste a YouTube link and<br>press "Load clip"</div>
+      <div class="cap bottom s1 up" id="cap"></div>
+      <div class="mark" id="mark"></div>
+      <div class="bar"><i id="prog"></i></div>
+    </div>
+    <div class="time" id="time">0:00 / 0:00</div>
+    <div class="ctrl">
+      <button class="pri" id="play">▶ Play clip</button>
+      <button id="restart">⏮ Restart</button>
+    </div>
+  </section>
+
+  <div>
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-t="clip">🎞 Clip</button>
+      <button class="tab" data-t="caps">💬 Captions</button>
+      <button class="tab" data-t="style">🔤 Style</button>
+      <button class="tab" data-t="color">🎨 Color</button>
+      <button class="tab" data-t="fx">✨ Effects</button>
+      <button class="tab" data-t="share">🔗 Share</button>
+    </div>
+
+    <section class="card pane on" id="p-clip">
+      <h2><b>1</b> Video and clip time</h2>
+      <label>YouTube link (video, Shorts or livestream replay)</label>
+      <input type="text" id="url" placeholder="https://www.youtube.com/watch?v=...">
+      <div class="row">
+        <div><label>Start (min:sec)</label><input type="text" id="start" value="0:00">
+          <button class="mini" id="setStart">Use current time as start</button></div>
+        <div><label>End</label><input type="text" id="end" value="0:30">
+          <button class="mini" id="setEnd">Use current time as end</button></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="loop" checked> Loop the clip</label>
+      <div style="margin-top:12px"><button class="pri" id="load" style="width:100%">Load clip</button></div>
+      <label>Frame position (which part of the video shows in vertical)</label>
+      <input type="range" id="xpos" min="0" max="100" value="50">
+      <div class="hint">Hours work too, like 1:23:45. For a livestream, paste the replay link once the stream has ended. Open this page from its https link, not as a local file.</div>
+    </section>
+
+    <section class="card pane" id="p-caps">
+      <h2><b>2</b> Captions</h2>
+      <label>One caption per line: time, then text</label>
+      <textarea id="caps" placeholder="0:00 This clip is absolutely wild
+0:04 Watch what happens next
+0:09 And here comes the best part"></textarea>
+      <label class="chk"><input type="checkbox" id="rel"> Count times from clip start (0:00 = start of clip)</label>
+      <div class="row" style="margin-top:10px">
+        <button class="pri" id="tr">🌐 Translate to English</button>
+        <button id="orig">↩ Restore original</button>
+      </div>
+      <div class="hint" id="trhint">Translation uses the free MyMemory service, so it has a daily limit and slang can come out rough. Fix any line in the box afterwards. Each line stays until the next line's time, and its words are highlighted one by one.</div>
+    </section>
+
+    <section class="card pane" id="p-style">
+      <h2><b>3</b> Caption style</h2>
+      <div class="row">
+        <div><label>Style</label>
+          <select id="style">
+            <option value="s1">Bold yellow (classic)</option>
+            <option value="s2">Highlight box</option>
+            <option value="s3">Neon glow</option>
+            <option value="s4">Clean fade</option>
+            <option value="s5">Pop shadow</option>
+            <option value="s6">Dark pill</option>
+            <option value="s7">Outline only</option>
+          </select></div>
+        <div><label>Font</label>
+          <select id="font">
+            <option value="f-poppins">Poppins</option>
+            <option value="f-anton">Anton</option>
+            <option value="f-bebas">Bebas Neue</option>
+            <option value="f-marker">Marker</option>
+          </select></div>
+      </div>
+      <div class="row">
+        <div><label>Entry animation</label>
+          <select id="anim">
+            <option value="a-pop">Pop</option>
+            <option value="a-bounce">Bounce</option>
+            <option value="a-slide">Slide</option>
+            <option value="a-shake">Shake</option>
+            <option value="a-fade">Fade</option>
+            <option value="">None</option>
+          </select></div>
+        <div><label>Position</label>
+          <select id="pos"><option value="bottom">Bottom</option><option value="middle">Middle</option><option value="top">Top</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>Highlight color</label><input type="color" id="hl" value="#ffd400"></div>
+        <div><label>Words at a time</label>
+          <select id="n"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      </div>
+      <div class="sl"><span>Text size</span><input type="range" id="fs" min="5" max="13" step="0.5" value="8"><em id="fs_v">8</em></div>
+      <label class="chk"><input type="checkbox" id="up" checked> Uppercase English words</label>
+    </section>
+
+    <section class="card pane" id="p-color">
+      <h2><b>4</b> Color grading</h2>
+      <div class="chips" id="chips">
+        <div class="chip on" data-p="none">Original</div>
+        <div class="chip" data-p="cinema">Cinematic</div>
+        <div class="chip" data-p="vintage">Vintage</div>
+        <div class="chip" data-p="bw">Black &amp; white</div>
+        <div class="chip" data-p="vibrant">Vibrant</div>
+        <div class="chip" data-p="cyber">Cyber</div>
+        <div class="chip" data-p="sunset">Sunset</div>
+        <div class="chip" data-p="moody">Moody</div>
+        <div class="chip" data-p="warm">Warm glow</div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="sl"><span>Brightness</span><input type="range" id="c_br" min="50" max="150" value="100"><em></em></div>
+        <div class="sl"><span>Contrast</span><input type="range" id="c_co" min="50" max="160" value="100"><em></em></div>
+        <div class="sl"><span>Saturation</span><input type="range" id="c_sa" min="0" max="220" value="100"><em></em></div>
+        <div class="sl"><span>Warmth (sepia)</span><input type="range" id="c_se" min="0" max="100" value="0"><em></em></div>
+        <div class="sl"><span>Hue shift</span><input type="range" id="c_hu" min="-180" max="180" value="0"><em></em></div>
+        <div class="sl"><span>Blur</span><input type="range" id="c_bl" min="0" max="6" step="0.5" value="0"><em></em></div>
+      </div>
+      <button class="mini" id="c_reset">Reset color</button>
+    </section>
+
+    <section class="card pane" id="p-fx">
+      <h2><b>5</b> Effects</h2>
+      <div class="row">
+        <div><label>Motion</label>
+          <select id="motion">
+            <option value="">None</option>
+            <option value="m-zoom">Slow zoom</option>
+            <option value="m-pulse">Beat pulse</option>
+            <option value="m-shake">Shake</option>
+            <option value="m-glitch">Glitch</option>
+            <option value="m-drift">Drift</option>
+          </select></div>
+        <div><label>Opening transition</label>
+          <select id="trans">
+            <option value="">None</option>
+            <option value="fade">Fade in from black</option>
+            <option value="flash">White flash</option>
+          </select></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="sl"><span>Film grain</span><input type="range" id="f_gr" min="0" max="100" value="0"><em></em></div>
+        <div class="sl"><span>Vignette</span><input type="range" id="f_vi" min="0" max="100" value="0"><em></em></div>
+        <div class="sl"><span>Scanlines</span><input type="range" id="f_sc" min="0" max="100" value="0"><em></em></div>
+        <div class="sl"><span>Light leak</span><input type="range" id="f_lk" min="0" max="100" value="0"><em></em></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="f_bars"> Cinematic black bars</label>
+      <label>Watermark or channel name</label>
+      <input type="text" id="wm" placeholder="@yourchannel">
+      <div class="hint">Effects show in the preview and in the share link. They are drawn over YouTube's player, so record your screen if you want a video file.</div>
+    </section>
+
+    <section class="card pane" id="p-share">
+      <h2><b>6</b> Share</h2>
+      <button class="pri" id="share" style="width:100%">🔗 Copy share link for this clip</button>
+      <div class="hint">The link saves the video, times, captions, style, color and effects. Whoever opens it sees exactly this clip.</div>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const $=id=>document.getElementById(id);
+let player=null,ready=false,apiReady=false,pendingLoad=null,playing=false,caps=[],lastKey='',origText=null,lastT=0,transDone=false;
+
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2600)}
+function vid(u){u=(u||'').trim();const m=u.match(/(?:youtu\.be\/|v=|shorts\/|live\/|embed\/)([\w-]{11})/);if(m)return m[1];return /^[\w-]{11}$/.test(u)?u:null}
+function pt(s){s=String(s).trim();if(!s)return 0;const p=s.split(':').map(Number);if(p.some(isNaN))return NaN;return p.reduce((a,b)=>a*60+b,0)}
+function ft(t){t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=Math.floor(t%60);return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0')}
+const S=()=>pt($('start').value)||0;
+const E=()=>{const e=pt($('end').value);return isNaN(e)?S()+30:e};
+
+/* tabs */
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.t));
+});
+
+/* captions */
+function parseCaps(){
+  const rel=$('rel').checked,s=S();
+  caps=$('caps').value.split('\n').map(l=>{
+    const m=l.match(/^\s*(\d+(?::\d+){0,2}(?:\.\d+)?)\s+(.+?)\s*$/);
+    if(!m)return null;
+    let t=pt(m[1]);if(rel)t+=s;
+    return {t,text:m[2]};
+  }).filter(Boolean).sort((a,b)=>a.t-b.t);
+  lastKey='';
+}
+
+/* color + effects */
+const PRESETS={
+  none:{br:100,co:100,sa:100,se:0,hu:0,bl:0},
+  cinema:{br:96,co:122,sa:115,se:18,hu:-8,bl:0},
+  vintage:{br:104,co:92,sa:78,se:55,hu:-6,bl:0},
+  bw:{br:104,co:128,sa:0,se:0,hu:0,bl:0},
+  vibrant:{br:104,co:112,sa:185,se:0,hu:0,bl:0},
+  cyber:{br:100,co:120,sa:150,se:0,hu:-55,bl:0},
+  sunset:{br:104,co:108,sa:140,se:35,hu:-14,bl:0},
+  moody:{br:84,co:132,sa:80,se:0,hu:18,bl:0},
+  warm:{br:108,co:96,sa:122,se:30,hu:-4,bl:0}
+};
+const CIDS=['br','co','sa','se','hu','bl'];
+function setColor(p){CIDS.forEach(k=>$('c_'+k).value=p[k]);applyAll()}
+function applyAll(){
+  const c=$('cap');
+  c.className='cap '+$('pos').value+' '+$('style').value+' '+$('font').value+' '+$('anim').value+($('up').checked?' up':'');
+  const r=document.documentElement.style;
+  r.setProperty('--hl',$('hl').value);
+  c.style.setProperty('--hl',$('hl').value);
+  c.style.setProperty('--fs',$('fs').value);
+  $('fs_v').textContent=$('fs').value;
+  const v=k=>+$('c_'+k).value;
+  $('stage').style.filter=`brightness(${v('br')}%) contrast(${v('co')}%) saturate(${v('sa')}%) sepia(${v('se')}%) hue-rotate(${v('hu')}deg) blur(${v('bl')}px)`;
+  const ph=$('phone').style;
+  ph.setProperty('--grain',$('f_gr').value/100*0.6);
+  ph.setProperty('--vig',$('f_vi').value/100);
+  ph.setProperty('--scan',$('f_sc').value/100*0.5);
+  ph.setProperty('--leak',$('f_lk').value/100*0.7);
+  $('bars').style.display=$('f_bars').checked?'block':'none';
+  $('mark').textContent=$('wm').value;
+  $('vwrap').style.left=$('xpos').value+'%';
+  $('vwrap').style.transform='translate(-'+$('xpos').value+'%,-50%)';
+  const st=$('stage');
+  st.className='stage '+$('motion').value;
+  st.style.setProperty('--mdur',Math.max(3,E()-S())+'s');
+  document.querySelectorAll('.sl').forEach(s=>{const i=s.querySelector('input'),e=s.querySelector('em');if(i&&e&&i.id!=='fs')e.textContent=i.value});
+}
+document.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===ch));
+  setColor(PRESETS[ch.dataset.p]);
+});
+$('c_reset').onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.p==='none'));setColor(PRESETS.none)};
+['style','font','anim','pos','hl','fs','up','xpos','motion','f_gr','f_vi','f_sc','f_lk','f_bars','wm',...CIDS.map(k=>'c_'+k)].forEach(id=>$(id).addEventListener('input',applyAll));
+['caps','rel','start','n'].forEach(id=>$(id).addEventListener('input',parseCaps));
+$('end').addEventListener('input',applyAll);
+
+/* opening transition */
+function playTrans(){
+  const t=$('trans').value;
+  const f=$('flash'),d=$('fade');
+  f.style.transition=d.style.transition='none';f.style.opacity=d.style.opacity=0;
+  if(!t)return;
+  const el=t==='flash'?f:d;
+  el.style.opacity=1;
+  void el.offsetWidth;
+  el.style.transition=t==='flash'?'opacity .45s ease-out':'opacity .9s ease-out';
+  el.style.opacity=0;
+}
+
+/* caption render */
+function renderCap(t){
+  const end=E();let i=-1;
+  for(let k=0;k<caps.length;k++){if(caps[k].t<=t)i=k;else break}
+  if(i<0||t>=end||t<S()){if(lastKey!==''){$('cap').innerHTML='';lastKey=''}return}
+  const c=caps[i],cEnd=caps[i+1]?Math.min(caps[i+1].t,end):end;
+  const words=c.text.split(/\s+/),n=+$('n').value;
+  const dur=Math.max(.1,cEnd-c.t);
+  const k=Math.min(words.length-1,Math.max(0,Math.floor((t-c.t)/dur*words.length)));
+  const key=i+'-'+k+'-'+n+'-'+$('anim').value;
+  if(key===lastKey)return;lastKey=key;
+  const ch=Math.floor(k/n);
+  $('cap').innerHTML=words.slice(ch*n,ch*n+n).map((w,j)=>`<span class="w${ch*n+j===k?' on':''}">${esc(w)}</span>`).join(' ');
+}
+
+/* main loop */
+function tick(){
+  if(!ready||!player||!player.getCurrentTime)return;
+  const t=player.getCurrentTime(),s=S(),e=E();
+  if(playing&&e>s&&t>=e){
+    if($('loop').checked){player.seekTo(s,true);playTrans()}else{player.pauseVideo()}
+  }
+  if(t<lastT-0.5&&Math.abs(t-s)<1)playTrans();
+  lastT=t;
+  const len=Math.max(.1,e-s);
+  $('prog').style.width=Math.min(100,Math.max(0,(t-s)/len*100))+'%';
+  $('time').textContent=ft(Math.max(0,t-s))+' / '+ft(len)+'   (video: '+ft(t)+')';
+  renderCap(t);
+}
+setInterval(tick,50);
+
+/* YouTube player */
+function onYouTubeIframeAPIReady(){apiReady=true;if(pendingLoad)loadClip(pendingLoad)}
+window.onYouTubeIframeAPIReady=onYouTubeIframeAPIReady;
+
+function loadClip(id){
+  if(!apiReady){pendingLoad=id;return}
+  pendingLoad=null;$('empty').style.display='none';parseCaps();applyAll();
+  if(player&&ready){player.loadVideoById({videoId:id,startSeconds:S()});playTrans();return}
+  if(player)return;
+  const pv={controls:0,rel:0,playsinline:1,modestbranding:1,disablekb:1,fs:0,iv_load_policy:3,start:Math.floor(S())};
+  if(location.protocol==='https:'||location.protocol==='http:'){pv.origin=location.origin;pv.enablejsapi=1}
+  player=new YT.Player('yt',{
+    videoId:id,
+    playerVars:pv,
+    events:{
+      onReady:()=>{ready=true;player.seekTo(S(),true)},
+      onStateChange:e=>{playing=(e.data===1);$('play').textContent=playing?'⏸ Pause':'▶ Play clip';if(e.data===1&&Math.abs(player.getCurrentTime()-S())<1.5)playTrans()},
+      onError:e=>toast(e.data===153||e.data===152
+        ?'Error '+e.data+': open this page from its live https link (GitHub Pages), not as a local file.'
+        :(e.data===101||e.data===150
+          ?'The video owner has disabled embedding for this video.'
+          :'Video could not play (error '+e.data+').'))
+    }
+  });
+}
+
+$('load').onclick=()=>{
+  const id=vid($('url').value);
+  if(!id){toast('Enter a valid YouTube link');return}
+  if(isNaN(pt($('start').value))||isNaN(pt($('end').value))){toast('Write times like 1:25');return}
+  if(E()<=S()){toast('End time must be after start time');return}
+  loadClip(id);
+};
+$('play').onclick=()=>{
+  if(!ready){toast('Load a clip first');return}
+  if(playing){player.pauseVideo();return}
+  const t=player.getCurrentTime();
+  if(t<S()||t>=E()-.2)player.seekTo(S(),true);
+  player.playVideo();
+};
+$('restart').onclick=()=>{if(!ready)return;player.seekTo(S(),true);player.playVideo();playTrans()};
+$('setStart').onclick=()=>{if(!ready)return toast('Load a video first');$('start').value=ft(player.getCurrentTime());parseCaps()};
+$('setEnd').onclick=()=>{if(!ready)return toast('Load a video first');$('end').value=ft(player.getCurrentTime());applyAll()};
+
+/* translate captions to English (free MyMemory service) */
+async function trLine(text){
+  const u='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=autodetect|en';
+  const r=await fetch(u);const j=await r.json();
+  let out=j&&j.responseData&&j.responseData.translatedText;
+  if(!out||/MYMEMORY WARNING|INVALID/i.test(out))throw new Error(out||'no result');
+  return out;
+}
+async function trLineHi(text){
+  try{return await trLine(text)}catch(e){
+    const u='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=hi|en';
+    const r=await fetch(u);const j=await r.json();
+    const out=j&&j.responseData&&j.responseData.translatedText;
+    if(!out||/MYMEMORY WARNING|INVALID/i.test(out))throw new Error(out||'no result');
+    return out;
+  }
+}
+$('tr').onclick=async()=>{
+  const lines=$('caps').value.split('\n');
+  if(!lines.some(l=>l.trim())){toast('Add some captions first');return}
+  if(origText===null)origText=$('caps').value;
+  const btn=$('tr');btn.disabled=true;const old=btn.textContent;
+  const out=[];let fail=0;
+  for(let i=0;i<lines.length;i++){
+    btn.textContent='Translating '+(i+1)+'/'+lines.length+'...';
+    const m=lines[i].match(/^(\s*\d+(?::\d+){0,2}(?:\.\d+)?)\s+(.+?)\s*$/);
+    if(!m){out.push(lines[i]);continue}
+    try{out.push(m[1]+' '+await trLineHi(m[2]))}
+    catch(e){fail++;out.push(lines[i])}
+  }
+  $('caps').value=out.join('\n');parseCaps();
+  btn.disabled=false;btn.textContent=old;
+  toast(fail?('Done, but '+fail+' line(s) could not be translated (daily limit?).'):'Translated to English ✅');
+};
+$('orig').onclick=()=>{
+  if(origText===null){toast('Nothing to restore yet');return}
+  $('caps').value=origText;origText=null;parseCaps();toast('Original captions restored');
+};
+
+/* share link */
+const SHARE=['url:v','start:s','end:e','caps:c','style:st','font:fo','anim:an','pos:pos','hl:hl','n:n','fs:fs','xpos:x','motion:mo','trans:tr','f_gr:gr','f_vi:vi','f_sc:sc','f_lk:lk','wm:wm',...CIDS.map(k=>'c_'+k+':k'+k)];
+$('share').onclick=async()=>{
+  const p=new URLSearchParams();
+  SHARE.forEach(x=>{const[id,k]=x.split(':');p.set(k,$(id).value)});
+  p.set('rel',$('rel').checked?1:0);p.set('up',$('up').checked?1:0);p.set('lp',$('loop').checked?1:0);p.set('bars',$('f_bars').checked?1:0);
+  const link=location.origin+location.pathname+'#'+p.toString();
+  try{await navigator.clipboard.writeText(link);toast('Link copied ✅')}
+  catch(e){prompt('Copy this link:',link)}
+};
+function fromHash(){
+  if(location.hash.length<2)return;
+  const p=new URLSearchParams(location.hash.slice(1));if(!p.get('v'))return;
+  SHARE.forEach(x=>{const[id,k]=x.split(':');if(p.has(k))$(id).value=p.get(k)});
+  $('rel').checked=p.get('rel')==='1';$('up').checked=p.get('up')!=='0';$('loop').checked=p.get('lp')!=='0';$('f_bars').checked=p.get('bars')==='1';
+  applyAll();parseCaps();
+  const id=vid($('url').value);if(id)loadClip(id);
+}
+applyAll();parseCaps();fromHash();
+</script>
+</body>
+</html>
