@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Clip Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800;900&family=Noto+Sans+Devanagari:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1115;--card:#181b22;--line:#2a2f3a;--tx:#eef1f6;--mut:#8b93a3;--ac:#ffd400;--ac2:#7c5cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Poppins','Noto Sans Devanagari',system-ui,sans-serif;font-weight:600;line-height:1.45}
+header{padding:18px 16px 4px;max-width:1000px;margin:auto}
+header h1{margin:0;font-size:22px}
+header p{margin:4px 0 0;color:var(--mut);font-size:14px;font-weight:600}
+main{max-width:1000px;margin:auto;padding:12px 16px 40px;display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:800px){main{grid-template-columns:360px 1fr;align-items:start}.prev{position:sticky;top:12px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.card h2{margin:0 0 10px;font-size:15px;color:var(--ac)}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input[type=text],textarea,select{width:100%;background:#0f1218;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:15px}
+textarea{min-height:140px;resize:vertical;font-family:ui-monospace,Menlo,monospace;font-size:14px;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--ac)}
+input[type=color]{width:44px;height:36px;border:0;background:none;padding:0}
+.row{display:flex;gap:8px;align-items:flex-end}
+.row>*{flex:1}
+button{background:#232834;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;cursor:pointer}
+button.pri{background:var(--ac);color:#111;border-color:var(--ac);font-weight:800}
+button:active{transform:scale(.97)}
+.mini{padding:6px 8px;font-size:12px;margin-top:6px;width:100%}
+.chk{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--tx);margin:10px 0 0}
+.chk input{width:18px;height:18px;accent-color:var(--ac)}
+.phone{container-type:inline-size;position:relative;width:min(100%,340px);aspect-ratio:9/16;margin:auto;background:#000;border-radius:22px;overflow:hidden;border:2px solid var(--line)}
+.vwrap{position:absolute;top:50%;left:50%;height:100%;aspect-ratio:16/9;transform:translate(-50%,-50%)}
+.vwrap iframe,.vwrap #yt{width:100%;height:100%;border:0;pointer-events:none;display:block}
+.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--mut);padding:24px;font-size:14px}
+.cap{position:absolute;left:5%;right:5%;text-align:center;font-family:'Poppins','Noto Sans Devanagari',Impact,sans-serif;font-weight:900;line-height:1.2;font-size:calc(var(--fs,8) * 1cqw);pointer-events:none;z-index:3}
+.cap.bottom{bottom:16%}.cap.middle{top:50%;transform:translateY(-50%)}.cap.top{top:12%}
+.cap.up{text-transform:uppercase}
+.cap .w{display:inline-block;margin:0 .12em;transition:transform .08s}
+.cap .w.on{transform:scale(1.12)}
+.s1 .w{color:#fff;-webkit-text-stroke:.14em #000;paint-order:stroke fill}
+.s1 .w.on{color:var(--hl)}
+.s2 .w{color:#fff;-webkit-text-stroke:.14em #000;paint-order:stroke fill;padding:0 .12em;border-radius:.2em}
+.s2 .w.on{background:var(--hl);color:#000;-webkit-text-stroke:0}
+.s3 .w{color:#fff;text-shadow:0 0 .15em rgba(255,255,255,.35)}
+.s3 .w.on{color:#fff;text-shadow:0 0 .12em var(--hl),0 0 .3em var(--hl),0 0 .6em var(--hl)}
+.s4 .w{color:rgba(255,255,255,.5);text-shadow:0 .05em .2em rgba(0,0,0,.8)}
+.s4 .w.on{color:#fff}
+.bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.18);z-index:4}
+.bar i{display:block;height:100%;width:0;background:var(--ac)}
+.ctrl{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.ctrl button{flex:1;max-width:160px}
+.hint{font-size:12px;color:var(--mut);margin-top:6px;font-weight:500}
+.time{font-variant-numeric:tabular-nums;text-align:center;color:var(--mut);font-size:13px;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 Clip Studio</h1>
+  <p>Pick a clip from any YouTube video or livestream, turn it into a vertical short, and add stylish captions.</p>
+</header>
+
+<main>
+  <section class="card prev">
+    <h2>Preview (9:16)</h2>
+    <div class="phone" id="phone">
+      <div class="vwrap" id="vwrap"><div id="yt"></div></div>
+      <div class="empty" id="empty">Paste a YouTube link and<br>press "Load clip"</div>
+      <div class="cap bottom s1 up" id="cap"></div>
+      <div class="bar"><i id="prog"></i></div>
+    </div>
+    <div class="time" id="time">0:00 / 0:00</div>
+    <div class="ctrl">
+      <button class="pri" id="play">▶ Play clip</button>
+      <button id="restart">⏮ Restart</button>
+    </div>
+  </section>
+
+  <div style="display:grid;gap:16px">
+    <section class="card">
+      <h2>1. Video and clip time</h2>
+      <label>YouTube link (video, Shorts or livestream replay)</label>
+      <input type="text" id="url" placeholder="https://www.youtube.com/watch?v=...">
+      <div class="row">
+        <div><label>Start (min:sec)</label><input type="text" id="start" value="0:00" inputmode="text">
+          <button class="mini" id="setStart">Use current time as start</button></div>
+        <div><label>End</label><input type="text" id="end" value="0:30" inputmode="text">
+          <button class="mini" id="setEnd">Use current time as end</button></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="loop" checked> Loop the clip</label>
+      <div style="margin-top:12px"><button class="pri" id="load" style="width:100%">Load clip</button></div>
+      <div class="hint">Hours work too, like 1:23:45. For a livestream, paste the replay link once the stream has ended.</div>
+      <label>Frame position (which part of the video shows in vertical)</label>
+      <input type="range" id="xpos" min="0" max="100" value="50">
+    </section>
+
+    <section class="card">
+      <h2>2. Captions</h2>
+      <label>One caption per line: time, then text</label>
+      <textarea id="caps" placeholder="0:00 This clip is absolutely wild
+0:04 Watch what happens next
+0:09 And here comes the best part"></textarea>
+      <label class="chk"><input type="checkbox" id="rel"> Count times from clip start (0:00 = start of clip)</label>
+      <div class="hint">Each line stays on screen until the next line's time. Words in a line are spread across its time and highlighted one by one.</div>
+    </section>
+
+    <section class="card">
+      <h2>3. Caption style</h2>
+      <div class="row">
+        <div><label>Style</label>
+          <select id="style">
+            <option value="s1">Bold yellow (classic)</option>
+            <option value="s2">Highlight box</option>
+            <option value="s3">Neon glow</option>
+            <option value="s4">Clean fade</option>
+          </select></div>
+        <div><label>Position</label>
+          <select id="pos"><option value="bottom">Bottom</option><option value="middle">Middle</option><option value="top">Top</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>Highlight color</label><input type="color" id="hl" value="#ffd400"></div>
+        <div><label>Words at a time</label>
+          <select id="n"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      </div>
+      <label>Text size</label>
+      <input type="range" id="fs" min="5" max="13" step="0.5" value="8">
+      <label class="chk"><input type="checkbox" id="up" checked> Uppercase English words</label>
+    </section>
+
+    <section class="card">
+      <h2>4. Share</h2>
+      <button class="pri" id="share" style="width:100%">🔗 Copy share link for this clip</button>
+      <div class="hint">The link saves the video, times, captions and style. Whoever opens it sees exactly this clip.</div>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const $=id=>document.getElementById(id);
+let player=null, ready=false, apiReady=false, pendingLoad=null, playing=false, caps=[], lastKey='';
+
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2400)}
+function vid(u){u=(u||'').trim();const m=u.match(/(?:youtu\.be\/|v=|shorts\/|live\/|embed\/)([\w-]{11})/);if(m)return m[1];return /^[\w-]{11}$/.test(u)?u:null}
+function pt(s){s=String(s).trim();if(!s)return 0;const p=s.split(':').map(Number);if(p.some(isNaN))return NaN;return p.reduce((a,b)=>a*60+b,0)}
+function ft(t){t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=Math.floor(t%60);return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0')}
+const S=()=>pt($('start').value)||0;
+const E=()=>{const e=pt($('end').value);return isNaN(e)?S()+30:e};
+
+function parseCaps(){
+  const rel=$('rel').checked, s=S();
+  caps=$('caps').value.split('\n').map(l=>{
+    const m=l.match(/^\s*(\d+(?::\d+){0,2}(?:\.\d+)?)\s+(.+?)\s*$/);
+    if(!m)return null;
+    let t=pt(m[1]); if(rel)t+=s;
+    return {t,text:m[2]};
+  }).filter(Boolean).sort((a,b)=>a.t-b.t);
+  lastKey='';
+}
+
+function applyStyle(){
+  const c=$('cap');
+  c.className='cap '+$('pos').value+' '+$('style').value+($('up').checked?' up':'');
+  c.style.setProperty('--hl',$('hl').value);
+  c.style.setProperty('--fs',$('fs').value);
+  $('vwrap').style.left=$('xpos').value+'%';
+  $('vwrap').style.transform='translate(-'+$('xpos').value+'%,-50%)';
+}
+
+function renderCap(t){
+  const end=E(); let i=-1;
+  for(let k=0;k<caps.length;k++){if(caps[k].t<=t)i=k;else break}
+  if(i<0||t>=end||t<S()){if(lastKey!==''){$('cap').innerHTML='';lastKey=''}return}
+  const c=caps[i], cEnd=caps[i+1]?Math.min(caps[i+1].t,end):end;
+  const words=c.text.split(/\s+/), n=+$('n').value;
+  const dur=Math.max(.1,cEnd-c.t);
+  const k=Math.min(words.length-1,Math.max(0,Math.floor((t-c.t)/dur*words.length)));
+  const key=i+'-'+k+'-'+n;
+  if(key===lastKey)return; lastKey=key;
+  const ch=Math.floor(k/n);
+  $('cap').innerHTML=words.slice(ch*n,ch*n+n).map((w,j)=>`<span class="w${ch*n+j===k?' on':''}">${esc(w)}</span>`).join(' ');
+}
+
+function tick(){
+  if(!ready||!player||!player.getCurrentTime)return;
+  const t=player.getCurrentTime(), s=S(), e=E();
+  if(playing&&e>s&&t>=e){
+    if($('loop').checked){player.seekTo(s,true)}else{player.pauseVideo()}
+  }
+  const len=Math.max(.1,e-s);
+  $('prog').style.width=Math.min(100,Math.max(0,(t-s)/len*100))+'%';
+  $('time').textContent=ft(Math.max(0,t-s))+' / '+ft(len)+'   (video: '+ft(t)+')';
+  renderCap(t);
+}
+setInterval(tick,50);
+
+function onYouTubeIframeAPIReady(){apiReady=true;if(pendingLoad)loadClip(pendingLoad)}
+window.onYouTubeIframeAPIReady=onYouTubeIframeAPIReady;
+
+function loadClip(id){
+  if(!apiReady){pendingLoad=id;return}
+  pendingLoad=null; $('empty').style.display='none'; parseCaps();
+  if(player&&ready){player.loadVideoById({videoId:id,startSeconds:S()});return}
+  if(player)return;
+  const pv={controls:0,rel:0,playsinline:1,modestbranding:1,disablekb:1,fs:0,iv_load_policy:3,start:Math.floor(S())};
+  if(location.protocol==='https:'||location.protocol==='http:'){pv.origin=location.origin;pv.enablejsapi=1}
+  player=new YT.Player('yt',{
+    videoId:id,
+    playerVars:pv,
+    events:{
+      onReady:()=>{ready=true;player.seekTo(S(),true)},
+      onStateChange:e=>{playing=(e.data===1);$('play').textContent=playing?'⏸ Pause':'▶ Play clip'},
+      onError:e=>toast(e.data===153||e.data===152
+        ?'Error '+e.data+': open this page from its live https link (GitHub Pages), not as a local file.'
+        :(e.data===101||e.data===150
+          ?'The video owner has disabled embedding for this video.'
+          :'Video could not play (error '+e.data+').'))
+    }
+  });
+}
+
+$('load').onclick=()=>{
+  const id=vid($('url').value);
+  if(!id){toast('Enter a valid YouTube link');return}
+  if(isNaN(pt($('start').value))||isNaN(pt($('end').value))){toast('Write times like 1:25');return}
+  if(E()<=S()){toast('End time must be after start time');return}
+  loadClip(id);
+};
+$('play').onclick=()=>{
+  if(!ready){toast('Load a clip first');return}
+  if(playing){player.pauseVideo();return}
+  const t=player.getCurrentTime();
+  if(t<S()||t>=E()-.2)player.seekTo(S(),true);
+  player.playVideo();
+};
+$('restart').onclick=()=>{if(!ready)return;player.seekTo(S(),true);player.playVideo()};
+$('setStart').onclick=()=>{if(!ready)return toast('Load a video first');$('start').value=ft(player.getCurrentTime());parseCaps()};
+$('setEnd').onclick=()=>{if(!ready)return toast('Load a video first');$('end').value=ft(player.getCurrentTime())};
+
+['caps','rel','start','n'].forEach(id=>$(id).addEventListener('input',parseCaps));
+['style','pos','hl','fs','up','xpos'].forEach(id=>$(id).addEventListener('input',applyStyle));
+
+$('share').onclick=async()=>{
+  const p=new URLSearchParams({v:$('url').value,s:$('start').value,e:$('end').value,c:$('caps').value,st:$('style').value,pos:$('pos').value,hl:$('hl').value,n:$('n').value,fs:$('fs').value,x:$('xpos').value,rel:$('rel').checked?1:0,up:$('up').checked?1:0,lp:$('loop').checked?1:0});
+  const link=location.origin+location.pathname+'#'+p.toString();
+  try{await navigator.clipboard.writeText(link);toast('Link copied ✅')}
+  catch(e){prompt('Copy this link:',link)}
+};
+
+function fromHash(){
+  if(location.hash.length<2)return;
+  const p=new URLSearchParams(location.hash.slice(1)); if(!p.get('v'))return;
+  const set=(id,k)=>{if(p.has(k))$(id).value=p.get(k)};
+  set('url','v');set('start','s');set('end','e');set('caps','c');set('style','st');set('pos','pos');set('hl','hl');set('n','n');set('fs','fs');set('xpos','x');
+  $('rel').checked=p.get('rel')==='1';$('up').checked=p.get('up')!=='0';$('loop').checked=p.get('lp')!=='0';
+  applyStyle();parseCaps();
+  const id=vid($('url').value); if(id)loadClip(id);
+}
+applyStyle();parseCaps();fromHash();
+</script>
+</body>
+</html>
